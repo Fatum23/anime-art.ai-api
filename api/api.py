@@ -69,7 +69,7 @@ async def upload_video(video: UploadFile = File(...)):
         with open(os.path.join(os.getcwd(), f"api/static/videos/{video.filename}"), "wb") as buffer:
             buffer.write(video.file.read())
     except Exception as e:
-        return os.path.join(os.getcwd(), f"api/static/videos/{video.filename}")
+        return os.path.join(os.getcwd(), f"api/static/videos/{video.filename}") + "      " + repr(e)
     return {"message": f"Video '{video.filename}' uploaded successfully!"}
 
 
