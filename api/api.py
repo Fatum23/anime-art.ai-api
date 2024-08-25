@@ -55,13 +55,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory=os.path.join(os.getcwd(), "api" , "static")), name="static")
-
-
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
     try:
-        with open(os.path.join("/tmp", f"api/static/videos/{video.filename}"), "wb") as buffer:
+        with open(os.path.join("/tmp", video.filename), "wb") as buffer:
             buffer.write(video.file.read())
     except Exception as e:
         return "Error: " + repr(e)
@@ -69,7 +66,7 @@ async def upload_video(video: UploadFile = File(...)):
 
 @app.get("/videos/{filename}")
 async def get_video(filename: str):
-    return FileResponse(os.path.join("/tmp", f"api/static/videos/{filename}")) 
+    return FileResponse(os.path.join("/tmp", filename)) 
 
 
 
