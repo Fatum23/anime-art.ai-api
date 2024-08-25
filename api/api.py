@@ -63,8 +63,8 @@ async def upload_video(video: UploadFile = File(...)):
     try:
         with open(os.path.join("/tmp", f"api/static/videos/{video.filename}"), "wb") as buffer:
             buffer.write(video.file.read())
-    except:
-        return "Error"
+    except Exception as e:
+        return "Error: " + repr(e)
 
 
 @app.get("/videos/{filename}")
