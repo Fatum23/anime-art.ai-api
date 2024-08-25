@@ -1,0 +1,6 @@
+.vercel
+venv
+api/__pycache__/*
+
+api/static/videos/*
+!api/static/videos/.gitkeep
