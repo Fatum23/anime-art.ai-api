@@ -1,9 +1,8 @@
 import uvicorn
 
-import os
 import telebot
 
-bot = telebot.TeleBot(os.environ.get("BOT_TOKEN"))
+bot = telebot.TeleBot("7462346035:AAF60-_oMbOaJQwIdRpkM63KpC-Ayx0eEzk")
 
 @bot.message_handler(commands=['start', 'help'])
 def start_message(message):
