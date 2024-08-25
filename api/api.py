@@ -57,20 +57,11 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=os.path.join(os.getcwd(), "api" , "static")), name="static")
 
-@app.get("/test")
-async def test():
-    return "Test successfull"
-
-
 
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
-    try:
-        with open(os.path.join(os.getcwd(), f"api/static/videos/{video.filename}"), "wb") as buffer:
-            buffer.write(video.file.read())
-    except Exception as e:
-        return os.path.join(os.getcwd(), f"api/static/videos/{video.filename}") + "      " + repr(e)
-    return {"message": f"Video '{video.filename}' uploaded successfully!"}
+    with open(os.path.join(os.getcwd(), f"api/static/videos/{video.filename}"), "wb") as buffer:
+        buffer.write(video.file.read())
 
 
 @app.get("/videos/{filename}")
