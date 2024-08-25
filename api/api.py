@@ -61,11 +61,10 @@ app.mount("/static", StaticFiles(directory=os.path.join(os.getcwd(), "api" , "st
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
     try:
-        with open(os.path.join(os.getcwd(), f"api/static/videos/{video.filename}"), "wb") as buffer:
-            buffer.write(video.file.read())
-            return "Success"
-    except:
-        return "Error"
+        open("a.txt", "w")
+        return "Success"
+    except Exception as e:
+        return "Error" + repr(e)
 
 
 @app.get("/videos/{filename}")
