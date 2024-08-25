@@ -65,9 +65,6 @@ async def test():
 
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
-    with open(f"api/static/videos/{video.filename}", "wb") as buffer:
-        buffer.write(video.file.read())
-
     return {"message": f"Video '{video.filename}' uploaded successfully!"}
 
 
