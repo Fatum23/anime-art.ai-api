@@ -65,6 +65,11 @@ async def test():
 
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
+    try:
+        with open(os.path.join(os.getcwd(), f"api/static/videos/{video.filename}"), "wb") as buffer:
+            buffer.write(video.file.read())
+    except e:
+        return e
     return {"message": f"Video '{video.filename}' uploaded successfully!"}
 
 
