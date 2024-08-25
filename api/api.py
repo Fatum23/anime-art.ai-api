@@ -36,7 +36,7 @@
 
 
 
-from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -60,8 +60,12 @@ app.mount("/static", StaticFiles(directory=os.path.join(os.getcwd(), "api" , "st
 
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
-    with open(os.path.join(os.getcwd(), f"api/static/videos/{video.filename}"), "wb") as buffer:
-        buffer.write(video.file.read())
+    try:
+        with open(os.path.join(os.getcwd(), f"api/static/videos/{video.filename}"), "wb") as buffer:
+            buffer.write(video.file.read())
+            return "Success"
+    except Exception as e:
+        return repr(e)
 
 
 @app.get("/videos/{filename}")
