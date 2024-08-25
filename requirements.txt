@@ -2,3 +2,4 @@ fastapi==0.112.2
 uvicorn==0.30.6
 python-multipart==0.0.9
 pyTelegramBotAPI==4.22.1
+APScheduler==3.10.4
