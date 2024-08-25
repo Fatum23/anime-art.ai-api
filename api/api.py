@@ -1,4 +1,5 @@
 import os
+import time
 from main import sendNotification
 
 from fastapi import FastAPI, File, UploadFile
@@ -19,8 +20,7 @@ app.add_middleware(
 )
 
 
-import asyncio
-timeout_seconds = 5  # 5 seconds timeout
+videos = {}
 
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
@@ -35,10 +35,30 @@ async def upload_video(video: UploadFile = File(...)):
         else:
             creator_id = int(filename.split("-")[0])
         
-        sendNotification(creator_id)
+        videos[video.filename] = time.time()
 
     except Exception as e:
         return "Error: " + repr(e)
+
+
+import apscheduler.schedulers.background as sched
+
+def clean_up_unused_uploads():
+
+    current_time = time.time()
+
+    for filename, time in videos.items():
+
+        if current_time - time > 5:
+            sendNotification(2114613077)
+
+# Schedule the clean up task to run every 5 minutes
+
+scheduler = sched.BackgroundScheduler()
+
+scheduler.add_job(clean_up_unused_uploads, 'interval', seconds=5)
+
+scheduler.start()
 
 
 @app.get("/videos/{filename}")
