@@ -75,8 +75,7 @@ async def upload_video(video: UploadFile = File(...)):
 
 @app.get("/videos/{filename}")
 async def get_video(filename: str):
-    file_path = f"static/videos/{filename}"
-    return FileResponse(file_path) 
+    return FileResponse(os.path.join(os.getcwd(), f"api/static/videos/{filename}")) 
 
 
 
