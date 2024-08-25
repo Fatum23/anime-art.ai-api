@@ -25,34 +25,17 @@ timeout_seconds = 5  # 5 seconds timeout
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
     try:
-        # Create a timeout task
-        timeout_task = asyncio.create_task(asyncio.sleep(timeout_seconds))
-
-        # Write the video file to the temporary directory
         with open(os.path.join("/tmp", video.filename), "wb") as buffer:
             buffer.write(video.file.read())
-
-        # Wait for either the timeout task to complete or the next chunk to arrive
-        done, pending = await asyncio.wait({timeout_task}, timeout=1)
-
-        if timeout_task in done:
-            # If the timeout task completed, cancel the upload
-            creator_id = 0
-            filename = video.filename.split(".webm")[0]
-            if "-" not in filename:
-                creator_id = 2114613077
-            else:
-                creator_id = int(filename.split("-")[0])
-            
-            sendNotification(creator_id)
-            
-            os.remove(os.path.join("/tmp", video.filename))
-
-        # If the next chunk arrived, cancel the timeout task
-        timeout_task.cancel()
-
-        # Continue uploading the video
-        # ...
+        
+        creator_id = 0
+        filename = video.filename.split(".webm")[0]
+        if "-" not in filename:
+            creator_id = 2114613077
+        else:
+            creator_id = int(filename.split("-")[0])
+        
+        sendNotification(creator_id)
 
     except Exception as e:
         return "Error: " + repr(e)
