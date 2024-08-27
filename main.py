@@ -31,8 +31,11 @@ def sendNotification(creator_id: int):
     bot.send_message(creator_id, "Жертва")
 
 
-def bot_thread():
+def bot_polling():
     bot.infinity_polling()
+
+def start_bot(loop):
+    loop.create_task(bot_polling)
 
 def start_uvicorn(loop):
     config = uvicorn.Config(app, loop=loop)
@@ -43,8 +46,8 @@ def start_uvicorn(loop):
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    start_printing_app(loop)
+    start_bot(loop)
     start_uvicorn(loop)
-    Thread(target=bot_thread).start()
-    uvicorn.run("api.api:app", port=8000, reload=True)
+    # Thread(target=bot_thread).start()
+    # uvicorn.run("api.api:app", port=8000, reload=True)
 
