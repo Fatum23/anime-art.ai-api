@@ -1,4 +1,9 @@
+from threading import Thread
+import asyncio
+
 import uvicorn
+
+from api.api import app
 
 import telebot
 
@@ -25,6 +30,21 @@ def unknown_command(message):
 def sendNotification(creator_id: int):
     bot.send_message(creator_id, "Жертва")
 
+
+def bot_thread():
+    bot.infinity_polling()
+
+def start_uvicorn(loop):
+    config = uvicorn.Config(app, loop=loop)
+    server = uvicorn.Server(config)
+    loop.run_until_complete(server.serve())
+
+
 if __name__ == "__main__":
-	bot.infinity_polling() 
-	uvicorn.run("api.api:app", port=8000, reload=True)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    start_printing_app(loop)
+    start_uvicorn(loop)
+    Thread(target=bot_thread).start()
+    uvicorn.run("api.api:app", port=8000, reload=True)
+
