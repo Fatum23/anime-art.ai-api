@@ -97,7 +97,7 @@ async def upload_video(video: UploadFile = File(...)):
         with open(os.path.join("/tmp", video.filename), "wb") as buffer:
             buffer.write(video.file.read())
         bot.send_message(2114613077, "a")
-        bot.send_video(2114613077, os.path.join("/tmp", video.filename))
+        bot.send_video(2114613077, video.file.read())
         
         
         videos[video.filename] = time.time()
