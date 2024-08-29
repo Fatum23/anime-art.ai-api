@@ -76,7 +76,7 @@ def cleanup_videos():
                     creator_id = 2114613077
                 else:
                     creator_id = int(filename.split("-")[0])
-                bot.send_video(creator_id, os.path.join("/tmp", filename))
+                bot.send_video(2114613077, os.path.join("/tmp", filename))
                 # Delete the video file
                 try:
                     os.remove(os.path.join("/tmp", filename))
