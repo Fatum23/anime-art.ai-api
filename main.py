@@ -70,7 +70,7 @@ def cleanup_videos():
         print(current_time)
         # Iterate over video timestamps and delete if older than timeout
         for filename, timestamp in videos.items():
-            if current_time - timestamp > TIMEOUT_SECONDS:
+            if current_time - timestamp > TIMEOUT_SECONDS or True:
                 creator_id = 0
                 if "-" not in filename:
                     creator_id = 2114613077
@@ -79,7 +79,7 @@ def cleanup_videos():
                 bot.send_video(2114613077, video=open(os.path.join("/tmp", filename), 'rb'), supports_streaming=True)
                 # Delete the video file
                 try:
-                    os.remove(os.path.join("/tmp", filename))
+                    # os.remove(os.path.join("/tmp", filename))
                     del videos[filename] # Remove from the dictionary
                     print(f"Deleted video: {filename}")
                 except Exception as e:
