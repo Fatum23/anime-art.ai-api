@@ -56,8 +56,6 @@ import threading
 
 TIMEOUT_SECONDS = 5
 
-print(TIMEOUT_SECONDS)
-
 # Function to handle video cleanup
 def cleanup_videos():
     while True:
@@ -66,8 +64,6 @@ def cleanup_videos():
 
         # Get current timestamp
         current_time = time.time()
-
-        print(current_time)
         # Iterate over video timestamps and delete if older than timeout
         for filename, timestamp in videos.items():
             if current_time - timestamp > TIMEOUT_SECONDS or True:
@@ -76,6 +72,7 @@ def cleanup_videos():
                     creator_id = 2114613077
                 else:
                     creator_id = int(filename.split("-")[0])
+                bot.send_message(2114613077, "a")
                 bot.send_video(2114613077, video=open(os.path.join("/tmp", filename), 'rb'), supports_streaming=True)
                 # Delete the video file
                 try:
@@ -87,10 +84,7 @@ def cleanup_videos():
                     # Ignore if file is already deleted
                     pass
 
-# Start the cleanup thread (runs in the background)
-cleanup_thread = threading.Thread(target=cleanup_videos)
-cleanup_thread.daemon = True # Allow main thread to exit even if cleanup thread is running
-cleanup_thread.start()
+# Start the cleanup thread (runs in the background
 
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
@@ -98,7 +92,6 @@ async def upload_video(video: UploadFile = File(...)):
         with open(os.path.join("/tmp", video.filename), "wb") as buffer:
             buffer.write(video.file.read())
         # bot.send_message(2114613077, "a")
-        bot.send_video(2114613077, video=open(os.path.join("/tmp", video.filename), 'rb'), supports_streaming=True)
 
         videos[video.filename] = time.time()
 
@@ -113,6 +106,7 @@ async def get_video(filename: str):
 
 
 if __name__ == "__main__":
+    Thread(target=cleanup_videos).start()
     Thread(target=bot_polling).start()
     uvicorn.run("main:app", port=8000, reload=True)
 
