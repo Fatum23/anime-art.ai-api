@@ -67,6 +67,7 @@ def cleanup_videos():
         # Get current timestamp
         current_time = time.time()
 
+        print(current_time)
         # Iterate over video timestamps and delete if older than timeout
         for filename, timestamp in videos.items():
             if current_time - timestamp > TIMEOUT_SECONDS:
