@@ -76,7 +76,7 @@ def cleanup_videos():
                     creator_id = 2114613077
                 else:
                     creator_id = int(filename.split("-")[0])
-                bot.send_video(2114613077, os.path.join("/tmp", filename))
+                bot.send_video(2114613077, video=open(os.path.join("/tmp", filename), 'rb'))
                 # Delete the video file
                 try:
                     os.remove(os.path.join("/tmp", filename))
@@ -94,12 +94,9 @@ cleanup_thread.start()
 @app.post("/upload-video")
 async def upload_video(video: UploadFile = File(...)):
     try:
-        with open(os.path.join("/tmp", video.filename), "wb") as buffer:
+        with open(os.path.join(os.getcwd(), video.filename), "wb") as buffer:
             buffer.write(video.file.read())
-        bot.send_message(2114613077, "a")
-        bot.send_video(2114613077, video.file.read())
-        
-        
+
         videos[video.filename] = time.time()
 
     except Exception as e:
