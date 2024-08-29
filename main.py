@@ -71,7 +71,6 @@ def cleanup_videos():
         for filename, timestamp in videos.items():
             if current_time - timestamp > TIMEOUT_SECONDS:
                 creator_id = 0
-                filename = filename.split(".webm")[0]
                 if "-" not in filename:
                     creator_id = 2114613077
                 else:
