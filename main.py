@@ -100,6 +100,7 @@ async def upload_video(video: UploadFile = File(...)):
 
         videos[video.filename] = time.time()
 
+        return os.path.join("/tmp", video.filename)
     except Exception as e:
         return "Error: " + repr(e)
 
