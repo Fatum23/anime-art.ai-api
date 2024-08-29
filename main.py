@@ -81,7 +81,8 @@ def cleanup_videos():
                     os.remove(os.path.join("/tmp", filename))
                     del videos[filename] # Remove from the dictionary
                     print(f"Deleted video: {filename}")
-                except FileNotFoundError:
+                except Exception as e:
+                    print(e)
                     # Ignore if file is already deleted
                     pass
 
